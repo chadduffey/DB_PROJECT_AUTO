@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Home{% endblock %}
+
+{% block navbar %}{% endblock %}
+
+{% block page_content %}
+	<div class="site-wrapper">
+	    <div class="site-wrapper-inner">
+	        <div class="cover-container">
+	          	<div class="inner cover">
+		            <h1 class="cover-heading">Dropbox Project Automation</h1>
+		            <p class="lead">Sample Dropbox project automation application. The application will allow the PM to quickly set up project folder structures in Dropbox and share them with the correct people.</p>
+		            <p class="lead">
+		              	<a href="/main" class="btn btn-lg btn-default">Get Started</a>
+		            </p>
+	          	</div>
+	        </div>
+	    </div>
+    </div>
+{% endblock %}
+
+
+
+

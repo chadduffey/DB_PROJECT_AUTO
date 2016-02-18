@@ -1,14 +1,52 @@
 {% extends 'base.html' %}
-{% import "bootstrap/wtf.html" as wtf %}
 
-{% block title %}Home{% endblock %}
+{% block head %}
+    {{ super() }}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Custom CSS -->
+    <link href="static/css/stylish-portfolio.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="static/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+{% endblock %}
 
 {% block page_content %}
-	<h1>Dropbox Project Automation</h1>
-	<h5>Welcome {% if name %}{{ name }}{% else %}Mate{% endif %}</h5>
-	<p>-----------------------------------------------------------------</p>
-	<p>The local date and time is {{ moment(current_time).format('LLL') }}.</p>
-	<p>That was {{ moment(current_time).fromNow(refresh=True) }}.</p>
-	<p>-----------------------------------------------------------------</p>
-	{{ wtf.quick_form(form) }}
+
+    <figure>
+        <img src="{{ url_for('static', filename = 'MKTGLogo.png') }}" height="70" />
+        <img src="{{ url_for('static', filename = 'Dropbox.png') }}" height="70" />
+    </figure>
+
+    <!-- Header -->
+    <header id="top" class="header">
+        
+        <div class="text-vertical-center">
+            <h1>Dropbox Project Automation</h1>
+            <h3>[Demo] Automate the creation of Dropbox folders for your team</h3>
+            <br>
+            <a href="/main" class="btn btn-dark btn-lg">Get Started</a>
+        </div>
+    </header>
+
 {% endblock %}
+
+
+
+    
+
+
+

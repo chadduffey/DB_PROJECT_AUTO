@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Dropbox Project Automation{% endblock %}
+
+{% block page_content %}
+	<div class="container">
+		<div class="page-header">
+			<h1>Main</h1>
+			{% if form %}
+				{{ wtf.quick_form(form) }}
+			{% endif %}
+			{% if db_auth %}
+				<p>Authorized.</p>
+				<p>{{ token }}</p>
+			{% endif %}
+		</div>
+	</div>
+{% endblock %}
