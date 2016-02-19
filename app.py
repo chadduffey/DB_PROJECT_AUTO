@@ -51,7 +51,7 @@ def main():
 	if form.validate_on_submit():
 		return redirect('https://www.dropbox.com/1/oauth2/authorize?%s' % urllib.urlencode({
 			'client_id': APP_KEY,
-			'redirect_uri': url_for('db_auth_finish', _external=True),
+			'redirect_uri': url_for('db_auth_finish', _external=True, _scheme='https'),
 			'response_type': 'code',
 			'state': csrf_token
 			}))
