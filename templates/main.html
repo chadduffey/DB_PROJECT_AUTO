@@ -4,16 +4,18 @@
 {% block title %}Dropbox Project Automation{% endblock %}
 
 {% block page_content %}
-	<div class="container">
-		<div class="page-header">
-			<h1>Main</h1>
+
 			{% if form %}
-				{{ wtf.quick_form(form) }}
+				<hr>
+				    <figure>
+        				<img src="{{ url_for('static', filename = 'Dropbox.png') }}" height="70" style="padding-bottom: 20px;"/>
+    					{{ wtf.quick_form(form) }}
+    				</figure>
+				<hr>
 			{% endif %}
 			{% if db_auth %}
 				<p>Authorized.</p>
 				<p>{{ token }}</p>
 			{% endif %}
-		</div>
-	</div>
+
 {% endblock %}

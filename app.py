@@ -29,7 +29,7 @@ APP_SECRET = 'bctri5jlrgj0srj'
 csrf_token = base64.urlsafe_b64encode(os.urandom(18))
 
 class AuthDBForm(Form):
-	submit = SubmitField('Authorize Dropbox')
+	submit = SubmitField('Authorize Access to Dropbox')
 
 
 @app.route('/')
