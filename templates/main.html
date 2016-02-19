@@ -14,8 +14,11 @@
 				<hr>
 			{% endif %}
 			{% if db_auth %}
-				<p>Authorized.</p>
-				<p>{{ token }}</p>
+				<p><img src="{{ url_for('static', filename = 'dropbox.png') }}" height="20" style="padding-right: 10px;"/>Succesfully logged in to {{ team_info['name'] }}</p>
+				<hr>
+				<h3>Provision new Project:</h3>
+				{{ wtf.quick_form(newProjectForm) }}
+				<hr>
 			{% endif %}
 
 {% endblock %}

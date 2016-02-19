@@ -3,7 +3,7 @@ import os
 import requests
 import urllib
 
-from flask import Flask, render_template, session, redirect, url_for, flash, request
+from flask import Flask, render_template, session, redirect, url_for, flash, request, abort
 
 from flask.ext.script import Manager
 from flask.ext.bootstrap import Bootstrap
@@ -12,8 +12,10 @@ from flask.ext.wtf import Form
 
 from datetime import datetime
 
-from wtforms import StringField, SubmitField
+from wtforms import StringField, SubmitField, SelectMultipleField
 from wtforms.validators import Required
+
+from dropboxAPI import get_info
 
 
 app = Flask(__name__)
@@ -31,6 +33,12 @@ csrf_token = base64.urlsafe_b64encode(os.urandom(18))
 class AuthDBForm(Form):
 	submit = SubmitField('Authorize Access to Dropbox')
 
+class NewProjectForm(Form):
+	project_name = StringField('Project Name', validators=[Required()])
+	project_members = SelectMultipleField(
+        'Project Team Members',
+        choices=[ ('user1', 'David Morse'), ('user2', 'Jack Blalock'), ('user3', 'Emma King'), ('user4', 'Eliza Rhee') ])
+	submit = SubmitField('Create New Project')
 
 @app.route('/')
 def index():
@@ -61,7 +69,10 @@ def db_auth_finish():
 			'redirect_uri': url_for('db_auth_finish', _external=True)},
 			auth=(APP_KEY, APP_SECRET)).json()
 	token = data['access_token']
-	return render_template('main.html', db_auth=True, token=token)
+	basic_team_information = get_info(token)
+	session['dropbox_token'] = token
+	newProjectForm = NewProjectForm()
+	return render_template('main.html', db_auth=True, team_info=basic_team_information, newProjectForm=newProjectForm)
 
 
 @app.errorhandler(404)
