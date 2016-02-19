@@ -66,7 +66,7 @@ def db_auth_finish():
 			data={
 			'code': request.args['code'],
 			'grant_type': 'authorization_code',
-			'redirect_uri': url_for('db_auth_finish', _external=True)},
+			'redirect_uri': url_for('db_auth_finish', _external=True, _scheme='https')},
 			auth=(APP_KEY, APP_SECRET)).json()
 	token = data['access_token']
 	basic_team_information = get_info(token)
