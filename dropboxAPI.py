@@ -23,3 +23,13 @@ def get_team_members(token):
 		return "get_team_members_failed"
 
 	return response.json()
+
+def get_dropbox_groups(token):
+	dfbToken = "Bearer " + token
+	try:
+	    response = requests.post(url='https://api.dropboxapi.com/2/team/groups/list',
+	                    headers = ({ "Authorization" : dfbToken }))
+	except:
+		return "get_dropbox_groups_failed"
+
+	return response.json()

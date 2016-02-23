@@ -12,10 +12,10 @@ from flask.ext.wtf import Form, widgets
 
 from datetime import datetime
 
-from wtforms import StringField, SubmitField, SelectMultipleField
+from wtforms import StringField, SubmitField, SelectField, BooleanField, FormField
 from wtforms.validators import Required
 
-from dropboxAPI import get_info, get_team_members
+from dropboxAPI import get_info, get_team_members, get_dropbox_groups
 
 
 app = Flask(__name__)
@@ -35,7 +35,10 @@ class AuthDBForm(Form):
 
 class NewProjectForm(Form):
 	project_name = StringField('Project Name', validators=[Required()])
-	project_members = SelectMultipleField( 'Provision to Dropbox Team Members')
+	project_members = SelectField('Dropbox Team to Provision')
+	marketing_folder = BooleanField('Project Documentation')
+	sales_folder = BooleanField('Project Videos')
+	engineering_folder = BooleanField('Project Final')
 	submit = SubmitField('Create New Project')
 
 @app.route('/')
@@ -71,11 +74,11 @@ def db_auth_finish():
 	token = data['access_token']
 	basic_team_information = get_info(token)
 	team_members = get_team_members(token)
+	dropbox_groups = get_dropbox_groups(token)
 	session['dropbox_token'] = token
 	newProjectForm = NewProjectForm()
-	newProjectForm.project_members.choices = [ (m['profile']['team_member_id'], m['profile']['name']['display_name'] +
-												" - " + m['profile']['email']) for m in team_members['members']]
-	return render_template('main.html', db_auth=True, team_info=basic_team_information, team_members=team_members, newProjectForm=newProjectForm)
+	newProjectForm.project_members.choices = [ (g['group_id'], g['group_name']) for g in dropbox_groups['groups']]
+	return render_template('main.html', db_auth=True, team_info=basic_team_information, newProjectForm=newProjectForm)
 
 
 @app.errorhandler(404)
