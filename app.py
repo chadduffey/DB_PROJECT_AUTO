@@ -8,14 +8,14 @@ from flask import Flask, render_template, session, redirect, url_for, flash, req
 from flask.ext.script import Manager
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.moment import Moment 
-from flask.ext.wtf import Form 
+from flask.ext.wtf import Form, widgets
 
 from datetime import datetime
 
 from wtforms import StringField, SubmitField, SelectMultipleField
 from wtforms.validators import Required
 
-from dropboxAPI import get_info
+from dropboxAPI import get_info, get_team_members
 
 
 app = Flask(__name__)
@@ -35,9 +35,7 @@ class AuthDBForm(Form):
 
 class NewProjectForm(Form):
 	project_name = StringField('Project Name', validators=[Required()])
-	project_members = SelectMultipleField(
-        'Project Team Members',
-        choices=[ ('user1', 'David Morse'), ('user2', 'Jack Blalock'), ('user3', 'Emma King'), ('user4', 'Eliza Rhee') ])
+	project_members = SelectMultipleField( 'Provision to Dropbox Team Members')
 	submit = SubmitField('Create New Project')
 
 @app.route('/')
@@ -51,7 +49,8 @@ def main():
 	if form.validate_on_submit():
 		return redirect('https://www.dropbox.com/1/oauth2/authorize?%s' % urllib.urlencode({
 			'client_id': APP_KEY,
-			'redirect_uri': url_for('db_auth_finish', _external=True, _scheme='https'),
+			#'redirect_uri': url_for('db_auth_finish', _external=True, _scheme='https'),
+			'redirect_uri': url_for('db_auth_finish', _external=True),
 			'response_type': 'code',
 			'state': csrf_token
 			}))
@@ -66,13 +65,17 @@ def db_auth_finish():
 			data={
 			'code': request.args['code'],
 			'grant_type': 'authorization_code',
-			'redirect_uri': url_for('db_auth_finish', _external=True, _scheme='https')},
+			#'redirect_uri': url_for('db_auth_finish', _external=True, _scheme='https')},
+			'redirect_uri': url_for('db_auth_finish', _external=True)},
 			auth=(APP_KEY, APP_SECRET)).json()
 	token = data['access_token']
 	basic_team_information = get_info(token)
+	team_members = get_team_members(token)
 	session['dropbox_token'] = token
 	newProjectForm = NewProjectForm()
-	return render_template('main.html', db_auth=True, team_info=basic_team_information, newProjectForm=newProjectForm)
+	newProjectForm.project_members.choices = [ (m['profile']['team_member_id'], m['profile']['name']['display_name'] +
+												" - " + m['profile']['email']) for m in team_members['members']]
+	return render_template('main.html', db_auth=True, team_info=basic_team_information, team_members=team_members, newProjectForm=newProjectForm)
 
 
 @app.errorhandler(404)
