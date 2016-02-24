@@ -8,10 +8,12 @@ Set up dependencies:
 virtualenv venv && source venv/bin/activate
 pip install -r requirements.txt
 
-*The core api work is authenticated via OAuth, However a static team token is configured for the application so that non team admins may set up projects. This feature relies on an environment variable (either in OS, or Heroku): 
+The Dropbox CORE api work is authenticated via OAuth. 
+A static business team token is required for so that non team admins may set up projects. 
+The token is configured as an environment variable (OS, or Heroku) with: 
 
 export DB_AUTH=YOURKEYHERE
-(config variable called DB_AUTH on Heroku)
+(or a Heroku config variable called DB_AUTH)
 
 Running:
 python app.py runserver

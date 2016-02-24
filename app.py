@@ -11,7 +11,8 @@ from flask.ext.moment import Moment
 
 from forms import AuthDBForm, NewProjectForm
 
-from dropboxAPI import get_info, get_team_members, get_dropbox_groups, get_user_account_detail
+from dropboxAPI import (get_info, get_team_members, get_dropbox_groups, get_user_account_detail,
+						get_file_or_folder_metdata, create_dropbox_folder)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -24,6 +25,9 @@ moment = Moment(app)
 #Dropbox App
 APP_KEY = 'k543xq496hfjkqw'
 APP_SECRET = '6u1exxfq1aydw4m'
+
+#Static template folder till we get some front end code to do this:
+template_folder = "/Project_Automation_Template"
 
 #Read Dropbox Business API key from OS or Heroku config var:
 DB_BUSINESS_AUTH = os.environ['DB_AUTH']
@@ -71,13 +75,21 @@ def main():
 	basic_team_information = get_info(DB_BUSINESS_AUTH)
 	dropbox_groups = get_dropbox_groups(DB_BUSINESS_AUTH)
 	user_account_detail = get_user_account_detail(session['dropbox_user_token'])
+	template_folder_info = get_file_or_folder_metdata(session['dropbox_user_token'], template_folder)
+	if "error" in template_folder_info:
+		if template_folder_info['error']['path']['.tag'] == 'not_found': 
+			create_dropbox_folder(session['dropbox_user_token'], template_folder)
+
 	session['account_id'] = user_account_detail['account_id']
+	
 	newProjectForm = NewProjectForm()
 	newProjectForm.project_rw_members.choices = [ (g['group_id'], g['group_name']) for g in dropbox_groups['groups']]
 	newProjectForm.project_ro_members.choices = [ (g['group_id'], g['group_name']) for g in dropbox_groups['groups']]
+	
 	return render_template('main.html', db_auth=True, newProjectForm=newProjectForm,  
 							user_detail=user_account_detail,
-							basic_team_information=basic_team_information)
+							basic_team_information=basic_team_information,
+							template_folder=template_folder)
 
 @app.errorhandler(404)
 def page_not_found(e):
