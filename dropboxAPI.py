@@ -1,6 +1,10 @@
 import json
 import requests
 
+#-------------------------
+# Business API
+#-------------------------
+
 def get_info(token):
     dfbToken = "Bearer " + token
     try:
@@ -31,5 +35,19 @@ def get_dropbox_groups(token):
 	                    headers = ({ "Authorization" : dfbToken }))
 	except:
 		return "get_dropbox_groups_failed"
+
+	return response.json()
+
+#-------------------------
+# Core API
+#-------------------------
+
+def get_user_account_detail(token):
+	userToken = "Bearer " + token
+	try:
+	    response = requests.post(url='https://api.dropboxapi.com/2/users/get_current_account',
+	                    headers = ({ "Authorization" : userToken }))
+	except:
+		return "get_user_account_detail_failed"
 
 	return response.json()

@@ -14,11 +14,14 @@
 				<hr>
 			{% endif %}
 			{% if db_auth %}
-				<p><img src="https://dl.dropboxusercontent.com/u/354544978/MKTG-DEMO/static/dropbox.png" height="20" style="padding-right: 10px;"/>Succesfully logged in to {{ team_info['name'] }}</p>
+				<p><img src="https://dl.dropboxusercontent.com/u/354544978/MKTG-DEMO/static/dropbox.png" height="20" style="padding-right: 10px;"/>Welcome {{ user_detail['name']['display_name'] }}</p>
 				<hr>
 				<h3>Provision new Project:</h3>
 				{{ wtf.quick_form(newProjectForm) }}
 				<hr>
+				{{ user_detail }}
+				<hr>
+				{{ basic_team_information }}
 			{% endif %}
 
 {% endblock %}
