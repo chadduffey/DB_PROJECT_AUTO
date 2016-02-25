@@ -73,3 +73,40 @@ def create_dropbox_folder(token, folder_name):
 		return "create_dropbox_folder_failed"
 
 	return response.json()
+
+def list_folder_content(token, folder_path):
+	userToken = "Bearer " + token
+	data="{\"path\": \"" + folder_path + "\",\"recursive\": true,\"include_media_info\": false,\"include_deleted\": false}"
+	try:
+	    response = requests.post(url='https://api.dropboxapi.com/2/files/list_folder',
+	    				data=data,
+	                    headers = ({ "Authorization" : userToken, "Content-Type" : "application/json" }))
+	except:
+		return "list_folder_content_failed"
+
+	return response.json()
+
+#---------------------------
+# Parsing Only (no api call)
+#---------------------------
+
+def get_folders_to_create(folder_information, template_folder, top_level_folder_to_create):
+	folder_list = []
+	for f in folder_information["entries"]:
+		original_folder = str(f["path_lower"])
+		new_folder = "/" + str(top_level_folder_to_create)
+		folder_to_add = original_folder.replace(template_folder.lower(), new_folder)
+		folder_list.append(folder_to_add)
+
+	return folder_list
+
+def create_folders(token, list_of_folder_names):
+	for f in list_of_folder_names:
+		create_dropbox_folder(token, str(f))
+
+
+
+
+
+
+

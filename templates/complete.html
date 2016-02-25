@@ -5,5 +5,7 @@
 
 {% block page_content %}
 	<p>Done.</p>
-	<p>Complete</p>
+	{% for f in folder_content %}
+		<p>{{ f }}</p>
+	{% endfor %}
 {% endblock %}

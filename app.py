@@ -12,7 +12,8 @@ from flask.ext.moment import Moment
 from forms import AuthDBForm, NewProjectForm
 
 from dropboxAPI import (get_info, get_team_members, get_dropbox_groups, get_user_account_detail,
-						get_file_or_folder_metdata, create_dropbox_folder)
+						get_file_or_folder_metdata, create_dropbox_folder, list_folder_content,
+						get_folders_to_create, create_folders)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -70,8 +71,12 @@ def db_auth_finish():
 	return redirect(url_for('main'))
 
 @app.route('/complete', methods=['GET', 'POST'])
-def complete():
-	return render_template('complete.html')
+def complete(form=None):
+	top_level_folder_to_create = form.project_name.data
+	folder_content = list_folder_content(session['dropbox_user_token'], template_folder)
+	folders_to_create = get_folders_to_create(folder_content, template_folder, top_level_folder_to_create)
+	create_folders(session['dropbox_user_token'], folders_to_create)
+	return render_template('complete.html', folder_content=folders_to_create)
 
 @app.route('/main', methods=['GET', 'POST'])
 def main():
@@ -82,7 +87,8 @@ def main():
 	newProjectForm.project_ro_members.choices = [ (g['group_id'], g['group_name']) for g in dropbox_groups['groups']]
 
 	if newProjectForm.validate_on_submit():
-		return redirect(url_for('complete'))#redirect(url_for('complete'))
+		#return redirect(url_for('complete'))
+		return complete(newProjectForm)
 
 	basic_team_information = get_info(DB_BUSINESS_AUTH)
 	user_account_detail = get_user_account_detail(session['dropbox_user_token'])
