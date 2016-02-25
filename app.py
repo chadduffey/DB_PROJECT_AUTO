@@ -69,11 +69,22 @@ def db_auth_finish():
 	session['dropbox_user_token'] = data['access_token']
 	return redirect(url_for('main'))
 
+@app.route('/complete', methods=['GET', 'POST'])
+def complete():
+	return render_template('complete.html')
 
 @app.route('/main', methods=['GET', 'POST'])
 def main():
-	basic_team_information = get_info(DB_BUSINESS_AUTH)
+	newProjectForm = NewProjectForm()
+	
 	dropbox_groups = get_dropbox_groups(DB_BUSINESS_AUTH)
+	newProjectForm.project_rw_members.choices = [ (g['group_id'], g['group_name']) for g in dropbox_groups['groups']]
+	newProjectForm.project_ro_members.choices = [ (g['group_id'], g['group_name']) for g in dropbox_groups['groups']]
+
+	if newProjectForm.validate_on_submit():
+		return redirect(url_for('complete'))#redirect(url_for('complete'))
+
+	basic_team_information = get_info(DB_BUSINESS_AUTH)
 	user_account_detail = get_user_account_detail(session['dropbox_user_token'])
 	template_folder_info = get_file_or_folder_metdata(session['dropbox_user_token'], template_folder)
 	if "error" in template_folder_info:
@@ -81,11 +92,6 @@ def main():
 			create_dropbox_folder(session['dropbox_user_token'], template_folder)
 
 	session['account_id'] = user_account_detail['account_id']
-	
-	newProjectForm = NewProjectForm()
-	newProjectForm.project_rw_members.choices = [ (g['group_id'], g['group_name']) for g in dropbox_groups['groups']]
-	newProjectForm.project_ro_members.choices = [ (g['group_id'], g['group_name']) for g in dropbox_groups['groups']]
-	
 	return render_template('main.html', db_auth=True, newProjectForm=newProjectForm,  
 							user_detail=user_account_detail,
 							basic_team_information=basic_team_information,
