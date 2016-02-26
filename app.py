@@ -37,26 +37,27 @@ DB_BUSINESS_AUTH = os.environ['DB_AUTH']
 
 csrf_token = base64.urlsafe_b64encode(os.urandom(18))
 
-@csrf.exempt
+
 @app.route('/')
 def index():
 	session['csrf_token'] = csrf_token
 	return render_template('index.html')
 
-@csrf.exempt
+
 @app.route('/auth', methods=['GET', 'POST'])
 def auth(): 	
 	form = AuthDBForm()
 	if form.validate_on_submit():
 		return redirect('https://www.dropbox.com/1/oauth2/authorize?%s' % urllib.urlencode({
 			'client_id': APP_KEY,
-			'redirect_uri': url_for('db_auth_finish', _external=True, _scheme='https'),
+			#'redirect_uri': url_for('db_auth_finish', _external=True, _scheme='https'),
+			'redirect_uri': url_for('db_auth_finish', _external=True),
 			'response_type': 'code',
 			'state': csrf_token
 			}))
 	return render_template('main.html', form=form)
 
-@csrf.exempt
+
 @app.route('/db_auth_finish', methods=['GET', 'POST'])
 def db_auth_finish():
 	#if request.args['state'] != session.pop('csrf_token'):
@@ -65,12 +66,13 @@ def db_auth_finish():
 			data={
 			'code': request.args['code'],
 			'grant_type': 'authorization_code',
-			'redirect_uri': url_for('db_auth_finish', _external=True, _scheme='https')},
+			#'redirect_uri': url_for('db_auth_finish', _external=True, _scheme='https')},
+			'redirect_uri': url_for('db_auth_finish', _external=True)},
 			auth=(APP_KEY, APP_SECRET)).json()
 	session['dropbox_user_token'] = data['access_token']
 	return redirect(url_for('main'))
 
-@csrf.exempt
+
 @app.route('/complete', methods=['GET', 'POST'])
 def complete(form=None):
 	top_level_folder_to_create = form.project_name.data
@@ -85,7 +87,6 @@ def complete(form=None):
 	return render_template('complete.html', folder_content=folders_to_create, project_name=top_level_folder_to_create)
 
 
-@csrf.exempt
 @app.route('/main', methods=['GET', 'POST'])
 def main():
 	newProjectForm = NewProjectForm()
