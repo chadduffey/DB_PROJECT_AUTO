@@ -37,12 +37,13 @@ DB_BUSINESS_AUTH = os.environ['DB_AUTH']
 
 csrf_token = base64.urlsafe_b64encode(os.urandom(18))
 
+@csrf.exempt
 @app.route('/')
 def index():
 	session['csrf_token'] = csrf_token
 	return render_template('index.html')
 
-
+@csrf.exempt
 @app.route('/auth', methods=['GET', 'POST'])
 def auth(): 	
 	form = AuthDBForm()
@@ -55,11 +56,11 @@ def auth():
 			}))
 	return render_template('main.html', form=form)
 
-
+@csrf.exempt
 @app.route('/db_auth_finish', methods=['GET', 'POST'])
 def db_auth_finish():
-	if request.args['state'] != session.pop('csrf_token'):
-		abort(403)
+	#if request.args['state'] != session.pop('csrf_token'):
+	#	abort(403)
 	data = requests.post('https://api.dropbox.com/1/oauth2/token',
 			data={
 			'code': request.args['code'],
@@ -69,7 +70,7 @@ def db_auth_finish():
 	session['dropbox_user_token'] = data['access_token']
 	return redirect(url_for('main'))
 
-
+@csrf.exempt
 @app.route('/complete', methods=['GET', 'POST'])
 def complete(form=None):
 	top_level_folder_to_create = form.project_name.data
@@ -84,6 +85,7 @@ def complete(form=None):
 	return render_template('complete.html', folder_content=folders_to_create, project_name=top_level_folder_to_create)
 
 
+@csrf.exempt
 @app.route('/main', methods=['GET', 'POST'])
 def main():
 	newProjectForm = NewProjectForm()
