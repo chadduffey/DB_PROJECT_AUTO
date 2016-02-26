@@ -58,8 +58,8 @@ def auth():
 
 @app.route('/db_auth_finish', methods=['GET', 'POST'])
 def db_auth_finish():
-	if request.args['state'] != session.pop('csrf_token'):
-		abort(403)
+	#if request.args['state'] != session.pop('csrf_token'):
+		#abort(403)
 	data = requests.post('https://api.dropbox.com/1/oauth2/token',
 			data={
 			'code': request.args['code'],
