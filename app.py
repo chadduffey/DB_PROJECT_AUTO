@@ -4,6 +4,7 @@ import requests
 import urllib
 
 from flask import Flask, render_template, session, redirect, url_for, flash, request, abort
+from flask_wtf.csrf import CsrfProtect
 
 from flask.ext.script import Manager
 from flask.ext.bootstrap import Bootstrap
@@ -21,6 +22,8 @@ app.config['SECRET_KEY'] = os.urandom(24)
 manager = Manager(app)
 bootstrap = Bootstrap(app)
 moment = Moment(app)
+
+csrf = CsrfProtect()
 
 #Dropbox App
 APP_KEY = 'k543xq496hfjkqw'
@@ -117,4 +120,5 @@ def internal_server_error(e):
 
 if __name__ == '__main__':
 	app.run()
+	csrf.init_app(app)
 
