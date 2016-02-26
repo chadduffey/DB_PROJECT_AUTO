@@ -19,7 +19,6 @@ app.config['SECRET_KEY'] = os.urandom(24)
 
 manager = Manager(app)
 bootstrap = Bootstrap(app)
-moment = Moment(app)
 
 #Dropbox App
 APP_KEY = 'k543xq496hfjkqw'
