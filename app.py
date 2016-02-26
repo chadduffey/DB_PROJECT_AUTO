@@ -17,7 +17,9 @@ from dropboxAPI import (get_info, get_team_members, get_dropbox_groups, get_user
 						get_folders_to_create, create_folders, share_dropbox_folder, add_dropbox_share_permissions)
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.urandom(24)
+#Breaks Heroku
+#app.config['SECRET_KEY'] = os.urandom(24)
+app.config['SECRET_KEY'] = "w3xkIqP5nF6a8Ndq79J4rK5nK4MI/HM4kUJTB3PWa8cxmiqrxQZ/+hgp/d+gcV7e"
 app.config['DEBUG'] = True
 
 manager = Manager(app)
