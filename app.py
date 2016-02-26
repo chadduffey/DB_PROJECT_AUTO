@@ -7,6 +7,7 @@ from flask import Flask, render_template, session, redirect, url_for, flash, req
 
 from flask.ext.script import Manager
 from flask.ext.bootstrap import Bootstrap
+from flask.ext.moment import Moment
 
 from forms import AuthDBForm, NewProjectForm
 
@@ -19,6 +20,7 @@ app.config['SECRET_KEY'] = os.urandom(24)
 
 manager = Manager(app)
 bootstrap = Bootstrap(app)
+moment = Moment(app)
 
 #Dropbox App
 APP_KEY = 'k543xq496hfjkqw'
