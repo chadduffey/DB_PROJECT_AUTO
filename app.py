@@ -18,6 +18,7 @@ from dropboxAPI import (get_info, get_team_members, get_dropbox_groups, get_user
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
+app.config['DEBUG'] = True
 
 manager = Manager(app)
 bootstrap = Bootstrap(app)
