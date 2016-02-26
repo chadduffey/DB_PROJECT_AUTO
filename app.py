@@ -46,9 +46,10 @@ def auth():
 	if form.validate_on_submit():
 		return redirect('https://www.dropbox.com/1/oauth2/authorize?%s' % urllib.urlencode({
 			'client_id': APP_KEY,
-			#once up on heroku we need to force scheme. 
-			#'redirect_uri': url_for('db_auth_finish', _external=True, _scheme='https'),
-			'redirect_uri': url_for('db_auth_finish', _external=True),
+			#heroku https: 
+			'redirect_uri': url_for('db_auth_finish', _external=True, _scheme='https'),
+			#local version:
+			#'redirect_uri': url_for('db_auth_finish', _external=True),
 			'response_type': 'code',
 			'state': csrf_token
 			}))
@@ -63,9 +64,10 @@ def db_auth_finish():
 			data={
 			'code': request.args['code'],
 			'grant_type': 'authorization_code',
-			#once up on heroku we need to force scheme. 
-			#'redirect_uri': url_for('db_auth_finish', _external=True, _scheme='https')},
-			'redirect_uri': url_for('db_auth_finish', _external=True)},
+			#Heroku version - https: 
+			'redirect_uri': url_for('db_auth_finish', _external=True, _scheme='https')},
+			#local version:
+			#'redirect_uri': url_for('db_auth_finish', _external=True)},
 			auth=(APP_KEY, APP_SECRET)).json()
 	session['dropbox_user_token'] = data['access_token']
 	return redirect(url_for('main'))
