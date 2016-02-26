@@ -7,7 +7,6 @@ from flask import Flask, render_template, session, redirect, url_for, flash, req
 
 from flask.ext.script import Manager
 from flask.ext.bootstrap import Bootstrap
-from flask.ext.moment import Moment 
 
 from forms import AuthDBForm, NewProjectForm
 
@@ -17,7 +16,6 @@ from dropboxAPI import (get_info, get_team_members, get_dropbox_groups, get_user
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
-app.config['DEBUG'] = True
 
 manager = Manager(app)
 bootstrap = Bootstrap(app)
@@ -37,19 +35,17 @@ csrf_token = base64.urlsafe_b64encode(os.urandom(18))
 
 @app.route('/')
 def index():
+	session['csrf_token'] = csrf_token
 	return render_template('index.html')
+
 
 @app.route('/auth', methods=['GET', 'POST'])
 def auth(): 	
-	session['csrf_token'] = csrf_token
 	form = AuthDBForm()
 	if form.validate_on_submit():
 		return redirect('https://www.dropbox.com/1/oauth2/authorize?%s' % urllib.urlencode({
 			'client_id': APP_KEY,
-			#heroku https: 
 			'redirect_uri': url_for('db_auth_finish', _external=True, _scheme='https'),
-			#local version:
-			#'redirect_uri': url_for('db_auth_finish', _external=True),
 			'response_type': 'code',
 			'state': csrf_token
 			}))
@@ -58,19 +54,17 @@ def auth():
 
 @app.route('/db_auth_finish', methods=['GET', 'POST'])
 def db_auth_finish():
-	#if request.args['state'] != session.pop('csrf_token'):
-		#abort(403)
+	if request.args['state'] != session.pop('csrf_token'):
+		abort(403)
 	data = requests.post('https://api.dropbox.com/1/oauth2/token',
 			data={
 			'code': request.args['code'],
 			'grant_type': 'authorization_code',
-			#Heroku version - https: 
 			'redirect_uri': url_for('db_auth_finish', _external=True, _scheme='https')},
-			#local version:
-			#'redirect_uri': url_for('db_auth_finish', _external=True)},
 			auth=(APP_KEY, APP_SECRET)).json()
 	session['dropbox_user_token'] = data['access_token']
 	return redirect(url_for('main'))
+
 
 @app.route('/complete', methods=['GET', 'POST'])
 def complete(form=None):
@@ -84,6 +78,7 @@ def complete(form=None):
 	perms_change_status_rw = add_dropbox_share_permissions(session['dropbox_user_token'], shared_folder_detail['shared_folder_id'], rw_group, "editor")
 	perms_change_status_ro = add_dropbox_share_permissions(session['dropbox_user_token'], shared_folder_detail['shared_folder_id'], ro_group, "viewer")
 	return render_template('complete.html', folder_content=folders_to_create, project_name=top_level_folder_to_create)
+
 
 @app.route('/main', methods=['GET', 'POST'])
 def main():
@@ -109,6 +104,7 @@ def main():
 							basic_team_information=basic_team_information,
 							template_folder=template_folder)
 
+
 @app.errorhandler(404)
 def page_not_found(e):
 	return render_template('404.html'), 404
@@ -116,6 +112,7 @@ def page_not_found(e):
 @app.errorhandler(500)
 def internal_server_error(e):
 	return render_template('500.html'), 500
+
 
 if __name__ == '__main__':
 	app.run()
