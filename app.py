@@ -32,11 +32,12 @@ template_folder = "/Project_Automation_Template"
 #Read Dropbox Business API key from OS or Heroku config var:
 DB_BUSINESS_AUTH = os.environ['DB_AUTH']
 
-csrf_token = base64.urlsafe_b64encode(os.urandom(18))
+#csrf_token = base64.urlsafe_b64encode(os.urandom(18))
 
 @app.route('/')
 def index():
-	session['csrf_token'] = csrf_token
+	#session['csrf_token'] = csrf_token
+	session['csrf_token'] = APP_SECRET
 	return render_template('index.html')
 
 
@@ -48,7 +49,7 @@ def auth():
 			'client_id': APP_KEY,
 			'redirect_uri': url_for('db_auth_finish', _external=True, _scheme='https'),
 			'response_type': 'code',
-			'state': csrf_token
+			'state': APP_SECRET
 			}))
 	return render_template('main.html', form=form)
 
