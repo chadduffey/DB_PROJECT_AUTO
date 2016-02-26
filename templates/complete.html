@@ -4,8 +4,10 @@
 {% block title %}Dropbox Project Automation{% endblock %}
 
 {% block page_content %}
-	<p>Done.</p>
+	<h3>Created:</h3>
 	{% for f in folder_content %}
 		<p>{{ f }}</p>
 	{% endfor %}
+	{{ sf }}
+	{{ temp }}
 {% endblock %}

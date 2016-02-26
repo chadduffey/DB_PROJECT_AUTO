@@ -86,6 +86,30 @@ def list_folder_content(token, folder_path):
 
 	return response.json()
 
+def share_dropbox_folder(token, folder_path):
+	userToken = "Bearer " + token
+	data = "{\"path\": \"" + folder_path + "\",\"acl_update_policy\": \"editors\",\"force_async\": false}"
+	try:
+	    response = requests.post(url='https://api.dropboxapi.com/2/sharing/share_folder',
+	    				data=data,
+	                    headers = ({ "Authorization" : userToken, "Content-Type" : "application/json" }))
+	except:
+		return "list_folder_content_failed"
+
+	return response.json()
+
+def add_rw_dropbox_share_permissions(token, shared_folder_id, group_id):
+	userToken = "Bearer " + token
+	data="{\"shared_folder_id\": \"" + shared_folder_id + "\",\"members\": [{\"member\": {\".tag\": \"dropbox_id\",\"dropbox_id\": \"" + group_id + "\"},\"access_level\": {\".tag\": \"editor\"}}]}"
+	try:
+	    response = requests.post(url='https://api.dropboxapi.com/2/sharing/add_folder_member',
+	    				data=data,
+	                    headers = ({ "Authorization" : userToken, "Content-Type" : "application/json" }))
+	except:
+		return "list_folder_content_failed"
+
+	return response#.json()
+
 #---------------------------
 # Parsing Only (no api call)
 #---------------------------
