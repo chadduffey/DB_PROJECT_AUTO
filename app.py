@@ -13,7 +13,7 @@ from forms import AuthDBForm, NewProjectForm
 
 from dropboxAPI import (get_info, get_team_members, get_dropbox_groups, get_user_account_detail,
 						get_file_or_folder_metdata, create_dropbox_folder, list_folder_content,
-						get_folders_to_create, create_folders, share_dropbox_folder, add_rw_dropbox_share_permissions)
+						get_folders_to_create, create_folders, share_dropbox_folder, add_dropbox_share_permissions)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -79,11 +79,9 @@ def complete(form=None):
 	folders_to_create = get_folders_to_create(folder_content, template_folder, top_level_folder_to_create)
 	create_folders(session['dropbox_user_token'], folders_to_create)
 	shared_folder_detail = share_dropbox_folder(session['dropbox_user_token'], folders_to_create[0])
-	perms_change_status = add_rw_dropbox_share_permissions(session['dropbox_user_token'], shared_folder_detail['shared_folder_id'], rw_group)
-
-	temp = str(shared_folder_detail['shared_folder_id']) + " - " + str(rw_group) + " - " + str(session['dropbox_user_token'])
-
-	return render_template('complete.html', folder_content=folders_to_create, sf=perms_change_status, temp=temp)
+	perms_change_status_rw = add_dropbox_share_permissions(session['dropbox_user_token'], shared_folder_detail['shared_folder_id'], rw_group, "editor")
+	perms_change_status_ro = add_dropbox_share_permissions(session['dropbox_user_token'], shared_folder_detail['shared_folder_id'], ro_group, "viewer")
+	return render_template('complete.html', folder_content=folders_to_create, project_name=top_level_folder_to_create)
 
 @app.route('/main', methods=['GET', 'POST'])
 def main():

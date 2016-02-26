@@ -98,9 +98,9 @@ def share_dropbox_folder(token, folder_path):
 
 	return response.json()
 
-def add_rw_dropbox_share_permissions(token, shared_folder_id, group_id):
+def add_dropbox_share_permissions(token, shared_folder_id, group_id, access_level):
 	userToken = "Bearer " + token
-	data="{\"shared_folder_id\": \"" + shared_folder_id + "\",\"members\": [{\"member\": {\".tag\": \"dropbox_id\",\"dropbox_id\": \"" + group_id + "\"},\"access_level\": {\".tag\": \"editor\"}}]}"
+	data="{\"shared_folder_id\": \"" + shared_folder_id + "\",\"members\": [{\"member\": {\".tag\": \"dropbox_id\",\"dropbox_id\": \"" + group_id + "\"},\"access_level\": {\".tag\": \"" + access_level +"\"}}]}"
 	try:
 	    response = requests.post(url='https://api.dropboxapi.com/2/sharing/add_folder_member',
 	    				data=data,
@@ -108,7 +108,7 @@ def add_rw_dropbox_share_permissions(token, shared_folder_id, group_id):
 	except:
 		return "list_folder_content_failed"
 
-	return response#.json()
+	return response.json()
 
 #---------------------------
 # Parsing Only (no api call)
