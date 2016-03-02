@@ -17,6 +17,10 @@
 		<h3>Provision new Project</h3>
 		<p>{{ template_folder }} is your current template folder</p>
 		{{ wtf.quick_form(newProjectForm) }}
-		{{ folder }}
+			<div class="spinner">
+				<img src="https://dl.dropboxusercontent.com/u/354544978/MKTG-DEMO/static/spin.gif"/>
+			</div>
 	{% endif %}
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="./static/js/app.js" type="text/javascript" charset="utf-8"></script>
 {% endblock %}
