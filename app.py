@@ -13,7 +13,7 @@ from flask.ext.moment import Moment
 from forms import AuthDBForm, NewProjectForm
 
 from dropboxAPI import (get_info, get_team_members, get_dropbox_groups, get_user_account_detail,
-						get_file_or_folder_metdata, create_dropbox_folder, list_folder_content,
+						get_file_or_folder_metadata, create_dropbox_folder, list_folder_content,
 						get_folders_to_create, create_folders, share_dropbox_folder, add_dropbox_share_permissions)
 
 app = Flask(__name__)
@@ -103,7 +103,7 @@ def main():
 
 	basic_team_information = get_info(DB_BUSINESS_AUTH)
 	user_account_detail = get_user_account_detail(session['dropbox_user_token'])
-	template_folder_info = get_file_or_folder_metdata(session['dropbox_user_token'], template_folder)
+	template_folder_info = get_file_or_folder_metadata(session['dropbox_user_token'], template_folder)
 	if "error" in template_folder_info:
 		if template_folder_info['error']['path']['.tag'] == 'not_found': 
 			create_dropbox_folder(session['dropbox_user_token'], template_folder)
