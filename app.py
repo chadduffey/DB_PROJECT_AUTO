@@ -19,8 +19,8 @@ from dropboxAPI import (get_info, get_team_members, get_dropbox_groups, get_user
 app = Flask(__name__)
 #Breaks Heroku
 #app.config['SECRET_KEY'] = os.urandom(24)
-app.config['SECRET_KEY'] = "w3xkIqP5nF6a8Ndq79J4rK5nK4MI/HM4kUJTB3PWa8cxmiqrxQZ/+hgp/d+gcV7e"
-app.config['DEBUG'] = True
+app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
+app.config['DEBUG'] = os.environ['DEBUG']
 
 manager = Manager(app)
 bootstrap = Bootstrap(app)
@@ -29,17 +29,16 @@ moment = Moment(app)
 csrf = CsrfProtect()
 
 #Dropbox App
-APP_KEY = 'k543xq496hfjkqw'
-APP_SECRET = '6u1exxfq1aydw4m'
-
-#Static template folder till we get some front end code to do this:
-template_folder = "/Project_Automation_Template"
+APP_KEY = os.environ['APP_KEY']
+APP_SECRET = os.environ['APP_SECRET']
 
 #Read Dropbox Business API key from OS or Heroku config var:
 DB_BUSINESS_AUTH = os.environ['DB_AUTH']
 
-csrf_token = base64.urlsafe_b64encode(os.urandom(18))
+#Static template folder till we get some front end code to do this:
+template_folder = "/Project_Automation_Template"
 
+csrf_token = base64.urlsafe_b64encode(os.urandom(18))
 
 @app.route('/')
 def index():

@@ -68,3 +68,13 @@ target/
 
 # pyenv
 .python-version
+
+
+# Heroku local server development
+.env
+
+# Vagrant stuff
+.vagrant
+
+# PyCharm customizations
+.idea
