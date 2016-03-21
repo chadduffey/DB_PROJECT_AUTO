@@ -50,7 +50,7 @@ def get_user_account_detail(token):
 
 	return response.json()
 
-def get_file_or_folder_metdata(token, folder_name):
+def get_file_or_folder_metadata(token, folder_name):
 	userToken = "Bearer " + token
 	data="{\"path\": \"" + folder_name + "\"}"
 	try:
@@ -58,7 +58,7 @@ def get_file_or_folder_metdata(token, folder_name):
 	    				data=data,
 	                    headers = ({ "Authorization" : userToken, "Content-Type" : "application/json" }))
 	except:
-		return "get_file_or_folder_metdata_failed"
+		return "get_file_or_folder_metadata_failed"
 
 	return response.json()
 
