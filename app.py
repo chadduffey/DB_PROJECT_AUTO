@@ -21,6 +21,7 @@ app = Flask(__name__)
 #app.config['SECRET_KEY'] = os.urandom(24)
 app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 app.config['DEBUG'] = os.environ['DEBUG']
+AUTH_REDIRECT_SCHEME = os.environ['AUTH_REDIRECT_SCHEME']
 
 manager = Manager(app)
 bootstrap = Bootstrap(app)
@@ -52,8 +53,7 @@ def auth():
 	if form.validate_on_submit():
 		return redirect('https://www.dropbox.com/1/oauth2/authorize?%s' % urllib.urlencode({
 			'client_id': APP_KEY,
-			'redirect_uri': url_for('db_auth_finish', _external=True, _scheme='https'),
-			#'redirect_uri': url_for('db_auth_finish', _external=True),
+			'redirect_uri': url_for('db_auth_finish', _external=True, _scheme=AUTH_REDIRECT_SCHEME),
 			'response_type': 'code',
 			'state': csrf_token
 			}))
@@ -68,8 +68,7 @@ def db_auth_finish():
 			data={
 			'code': request.args['code'],
 			'grant_type': 'authorization_code',
-			'redirect_uri': url_for('db_auth_finish', _external=True, _scheme='https')},
-			#'redirect_uri': url_for('db_auth_finish', _external=True)},
+			'redirect_uri': url_for('db_auth_finish', _external=True, _scheme=AUTH_REDIRECT_SCHEME)},
 			auth=(APP_KEY, APP_SECRET)).json()
 	session['dropbox_user_token'] = data['access_token']
 	return redirect(url_for('main'))
@@ -91,8 +90,10 @@ def complete(form=None):
 
 @app.route('/main', methods=['GET', 'POST'])
 def main():
+	if 'dropbox_user_token' not in session:
+		return redirect('/')
 	newProjectForm = NewProjectForm()
-	
+
 	dropbox_groups = get_dropbox_groups(DB_BUSINESS_AUTH)
 	newProjectForm.project_rw_members.choices = [ (g['group_id'], g['group_name']) for g in dropbox_groups['groups']]
 	newProjectForm.project_ro_members.choices = [ (g['group_id'], g['group_name']) for g in dropbox_groups['groups']]
